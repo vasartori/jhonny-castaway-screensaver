@@ -8,7 +8,7 @@ This small project is inspired in https://github.com/graysky2/xscreensaver-aeria
 - mpv
 - wget
 - xscreensaver
-- Jhonny Castaway Video (see instructions how to get [here](#download))
+- Jhonny Castaway Video (see instructions how to get [here](#download-video))
 
 ## Instalation
 
@@ -25,7 +25,7 @@ cp xscreensaver-johnny_castaway /usr/lib/xscreensaver/xscreensaver-johnny_castaw
 xscreensaver-johnny_castaway		    \n\
 ```
 
-## [Download Video](#download)
+## Download Video
 ** This is a important step!! **
 
 The screensaver needs a video file.
