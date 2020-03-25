@@ -1,2 +1,2 @@
-# jhonny-castway-screensaver
-Jhonny Castway Screensaver for Linux Machines
+# jhonny-castaway-screensaver
+Jhonny Castaway Screensaver for Linux Machines
