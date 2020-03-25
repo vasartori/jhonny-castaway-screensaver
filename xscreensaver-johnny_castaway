@@ -1,0 +1,21 @@
+#!/bin/bash
+
+[[ -z "$XDG_CONFIG_HOME" ]] &&
+  XDG_CONFIG_HOME="$HOME/.config"
+
+command -v mpv >/dev/null 2>&1 || {
+echo "I require mpv but it's not installed. Aborting." >&2
+exit 1; }
+
+JC_MOVIE_PATH=/opt/jc
+
+trap : SIGTERM SIGINT SIGHUP
+while (true) #!(keystate lshift)
+do
+  START_AT=$(shuf -i 0-36 -n1)
+  mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 --start="00:${START_AT}:00" $JC_MOVIE_PATH/jc.mkv &
+  #mpv --really-quiet --no-audio --fs --no-stop-screensaver --panscan=1.0 --start="00:${START_AT}:00" $JC_MOVIE_PATH/jc.mkv &
+  pid=$!
+  wait $pid
+  [ $? -gt 128 ] && { kill $pid ; exit 128; } ;
+done
