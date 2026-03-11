@@ -1,38 +1,116 @@
-# jhonny-castaway-screensaver
-Jhonny Castaway Screensaver for Linux Machines
+# Johnny Castaway Screensaver for Linux
 
-This small project is inspired in https://github.com/graysky2/xscreensaver-aerial
+This project provides a simple way to use the classic **Johnny Castaway** animation as a screensaver on Linux systems using **xscreensaver** and **mpv**.
+
+The implementation is inspired by the approach used in the project:
+https://github.com/graysky2/xscreensaver-aerial
+
+Instead of rendering frames directly, the screensaver runs an `mpv` instance embedded inside the xscreensaver window and plays the Johnny Castaway animation video.
+
+The script also selects a random start position in the video so the animation does not always begin from the same point.
 
 ## Dependencies
+
+The following packages are required:
+
 - coreutils
 - mpv
-- wget
 - xscreensaver
-- Jhonny Castaway Video (see instructions how to get [here](#download-video))
+- yt-dlp (used to download the videos)
 
-## Instalation
+## Compatibility
 
-This was tested only in Ubuntu (and variations, like Mint)
+This screensaver works in **X11 environments**.
 
-1. Clone this repo, and copy the script `xscreensaver-johnny_castaway` to path: `/usr/lib/xscreensaver/xscreensaver-johnny_castaway`. Remember to check permissions. This file needs execution permission.
+Modern Wayland-based desktop sessions (such as GNOME Wayland or KDE Wayland) do not support XScreenSaver.
 
-```sh
-cp xscreensaver-johnny_castaway /usr/lib/xscreensaver/xscreensaver-johnny_castaway ; chmod +x usr/lib/xscreensaver/xscreensaver-johnny_castaway
+If you want to use this project, make sure your session is running under X11.
+
+## Installation
+
+This was tested on Ubuntu and Ubuntu-based distributions (such as Linux Mint), but should work on most Linux systems using **xscreensaver**.
+
+### 1. Install the screensaver script
+
+Clone this repository and copy the script to the xscreensaver directory:
+
+```bash
+sudo cp xscreensaver-johnny_castaway /usr/libexec/xscreensaver/xscreensaver-johnny_castaway
+sudo chmod +x /usr/libexec/xscreensaver/xscreensaver-johnny_castaway
 ```
 
-2. Edit ~/.xscreensaver to add support for it to see this script. Look for the line that beings with "programs:" and simply add the following to the file:
+Note: Some older documentation refers to `/usr/lib/xscreensaver/`, but on modern distributions the correct path is usually:
+
 ```
-xscreensaver-johnny_castaway		    \n\
+/usr/libexec/xscreensaver/
 ```
 
-## Download Video
-** This is a important step!! **
+### 2. Register the screensaver in xscreensaver
 
-The screensaver needs a video file.
-Get the video file with:
-```sh
+Edit the file:
+
+```
+~/.xscreensaver
+```
+
+Locate the line that begins with:
+
+```
+programs:
+```
+
+Add the following entry:
+
+```
+xscreensaver-johnny_castaway    \n\
+```
+
+After restarting xscreensaver, the new screensaver should appear in the list.
+
+## Downloading the Videos
+
+The screensaver requires the Johnny Castaway animation video files.
+
+Create the destination directory:
+
+```bash
 sudo mkdir -p /opt/jc
-sudo wget https://storage.googleapis.com/jhonny-castway/jc.mkv -O /opt/jc/jc.mkv
 ```
 
-This file was downloaded from [youtube](https://www.youtube.com/watch?v=-hPS_aQzueI) using [youtube-dl](https://youtube-dl.org/)
+Then download the videos using **yt-dlp**:
+
+```bash
+sudo yt-dlp -o /opt/jc/jc.mp4 https://youtu.be/l8D6qppreiI
+sudo yt-dlp -o /opt/jc/jc-xmas.mp4 https://youtu.be/yeFMQ-OK50A
+```
+
+These two videos correspond to:
+
+- the regular Johnny Castaway animation
+- a Christmas-themed version used during December
+
+## Videos
+
+You can find them here:
+
+- https://youtu.be/l8D6qppreiI
+- https://youtu.be/yeFMQ-OK50A
+
+All credit for the original animation and video capture belongs to the respective creators.
+
+## Notes
+
+The script randomly chooses a starting timestamp in the video so that the animation appears continuous and does not always start from the same scene.
+
+The Christmas version of the animation is automatically used during December.
+
+The starting position in the video also depends on the current time of day:
+
+- During the day (06:00–18:00), the script starts the video in segments corresponding to daytime scenes.
+- During the night (18:00–06:00), the script starts the video in segments corresponding to nighttime scenes.
+
+This behavior applies to both the regular Johnny Castaway animation and the Christmas version.
+
+The script assumes that specific time ranges in the video correspond to day and night scenes and selects the starting timestamp accordingly.
+
+If you are a Linux Mint user, follow [these steps](https://forums.linuxmint.com/viewtopic.php?f=42&t=284037) to get xscreensaver running.
