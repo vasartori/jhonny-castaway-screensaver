@@ -3,18 +3,72 @@
 [[ -z "$XDG_CONFIG_HOME" ]] &&
   XDG_CONFIG_HOME="$HOME/.config"
 
+start_at_normal() {
+  local HOUR=$(date +%H)
+  local HR_START_AT MIN_START_AT
+  if [ "$HOUR" -ge 6 ] && [ "$HOUR" -lt 18 ]; then
+    HR_START_AT=$(shuf -i 0-5 -n1)
+  else
+    HR_START_AT=$(shuf -i 7-8 -n1)
+  fi
+
+  MIN_START_AT=$(shuf -i 0-30 -n1)
+  printf "%02d:%02d:00\n" "$HR_START_AT" "$MIN_START_AT"
+}
+
+
+start_at_xmas(){
+  local HOUR=$(date +%H)
+  local HR_START_AT MIN_START_AT
+  if [ "$HOUR" -ge 6 ] && [ "$HOUR" -lt 18 ]; then
+    HR_START_AT=$(shuf -i 0-5 -n1)
+  else
+    HR_START_AT=$(shuf -i 6-7 -n1)
+  fi
+
+  MIN_START_AT=$(shuf -i 0-30 -n1)
+  printf "%02d:%02d:00\n" "$HR_START_AT" "$MIN_START_AT"
+
+}
+
+
+start_at(){
+  local MONTH=$(date +%m)
+  if [[ "$MONTH" -eq 12 ]]; then
+    start_at_xmas
+  else
+    start_at_normal
+  fi
+}
+
+get_file() {
+  local MONTH=$(date +%m)
+  if [[ "$MONTH" -eq 12 ]]; then
+    echo "jc-xmas.mp4"
+  else
+    echo "jc.mp4"
+  fi
+}
+
 command -v mpv >/dev/null 2>&1 || {
 echo "I require mpv but it's not installed. Aborting." >&2
 exit 1; }
 
 JC_MOVIE_PATH=/opt/jc
+FILE="${JC_MOVIE_PATH}/$(get_file)"
+
+if [ ! -f "${FILE}" ]; then
+  echo "Video file $FILE does not exists." >&2
+  exit 1
+fi
+
 
 trap : SIGTERM SIGINT SIGHUP
-while (true) #!(keystate lshift)
+while true #!(keystate lshift)
 do
-  START_AT=$(shuf -i 0-36 -n1)
-  mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 --start="00:${START_AT}:00" $JC_MOVIE_PATH/jc.mkv &
-  #mpv --really-quiet --no-audio --fs --no-stop-screensaver --panscan=1.0 --start="00:${START_AT}:00" $JC_MOVIE_PATH/jc.mkv &
+  START_AT=$(start_at)
+  mpv --really-quiet --no-audio --fs --no-stop-screensaver --wid="$XSCREENSAVER_WINDOW" --panscan=1.0 --start="${START_AT}" $FILE &
+  # mpv --really-quiet --no-audio --fs --no-stop-screensaver --panscan=1.0 --start="${START_AT}" $FILE &
   pid=$!
   wait $pid
   [ $? -gt 128 ] && { kill $pid ; exit 128; } ;
